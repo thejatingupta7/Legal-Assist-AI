@@ -5,6 +5,52 @@ This repository contains the code for a chatbot using `Langchain` and backed by 
 1. [Installation](#installation)
 2. [Usage](#usage)
 
+# Legal-Assist-AI
+
+Legal-Assist-AI is an AI-powered assistant designed to help users navigate and analyze legal documents, leveraging advanced language models and vector search for efficient information retrieval.
+
+## Repository Structure
+
+- `app.py` — Main application entry point.
+- `embed.py` — Embedding logic for document processing.
+- `langchain_utils.py` — Utilities for integrating with LangChain.
+- `visualize.py` — Visualization tools for legal data.
+- `requirements.txt` — Python dependencies.
+- `Readme.md` — Project documentation.
+- `LICENSE` — License information.
+- `data_law/` — Collection of legal PDFs and resources.
+- `embed_db/` — Vector database files (FAISS, pickle).
+
+## Features
+
+- Search and analyze legal documents.
+- Visualize legal data and similarity scores.
+- Integrate with LangChain for advanced NLP tasks.
+- Modular codebase for easy extension.
+
+## Getting Started
+
+1. Clone the repository:
+    ```powershell
+    git clone https://github.com/thejatingupta7/Legal-Assist-AI.git
+    ```
+2. Install dependencies:
+    ```powershell
+    pip install -r requirements.txt
+    ```
+3. Run the application:
+    ```powershell
+    python app.py
+    ```
+
+## License
+
+This project is licensed under the terms of the LICENSE file.
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
 ## Installation
 1. Clone the repository
 ```
