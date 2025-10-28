@@ -1,4 +1,4 @@
-# Nyaysathi-GPT
+# Legal Assist-AI
 This repository contains the code for a chatbot using `Langchain` and backed by `Meta-Llama-3-8B` by `Meta` using `Huggingface` and `Streamlit` for frontend UI.
 
 ## Table of Contents
@@ -82,3 +82,4 @@ pip install -r requirements.txt
     ```
     python app.py
     ```
+
