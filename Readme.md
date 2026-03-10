@@ -83,3 +83,18 @@ pip install -r requirements.txt
     python app.py
     ```
 
+## 📚 Citation
+If you intend to use this work, please cite as:
+
+```bibtex
+@misc{gupta2025legalassistaileveraging,
+      title={Legal Assist AI: Leveraging Transformer-Based Model for Effective Legal Assistance}, 
+      author={Jatin Gupta and Akhil Sharma and Saransh Singhania and Ali Imam Abidi},
+      year={2025},
+      eprint={2505.22003},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      doi={10.48550/arXiv.2505.22003},
+      url={https://arxiv.org/abs/2505.22003}, 
+}
+
