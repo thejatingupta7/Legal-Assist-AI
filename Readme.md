@@ -1,4 +1,4 @@
-# Legal-Assist-AI
+# Legal-Assist-AI ⚖️🤖
 
 Legal-Assist-AI is an AI-powered assistant designed to help users navigate and analyze legal documents, leveraging advanced language models and vector search for efficient information retrieval.
 
@@ -128,5 +128,6 @@ If you intend to use this work, please cite as:
       doi={10.48550/arXiv.2505.22003},
       url={https://arxiv.org/abs/2505.22003}, 
 }
+
 
 
