@@ -76,7 +76,7 @@ def get_rag_response_stream(query, legal_doc_text=""):
 
 # --- Page setup and styling ---
 def configure_page():
-    st.set_page_config(page_title="LegalThinkFlow", page_icon="⚖️", layout="wide")
+    st.set_page_config(page_title="Legal Assist AI", page_icon="⚖️", layout="wide")
 
 def add_custom_css():
     st.markdown("""
@@ -101,7 +101,7 @@ def add_custom_css():
 def main():
     configure_page()
     add_custom_css()
-    st.title("LegalThinkFlow ⚖️📜")
+    st.title("Legal Assist AI ⚖️📜")
     st.subheader("Your AI Assistant for Indian Legal Queries")
 
     if 'history' not in st.session_state:
