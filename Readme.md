@@ -97,7 +97,11 @@ This repository contains the code for a chatbot using `Langchain` and backed by 
 
 
 ## Framework of Legal Assist AI
+
+<div align="center">
+    
 ![alt text](archit.svg)
+</div>
 
 ## Results on All India Bar Exam
 
@@ -127,6 +131,7 @@ If you intend to use this work, please cite as:
       doi={10.48550/arXiv.2505.22003},
       url={https://arxiv.org/abs/2505.22003}, 
 }
+
 
 
 
