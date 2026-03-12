@@ -1,9 +1,8 @@
-# Legal Assist-AI
-This repository contains the code for a chatbot using `Langchain` and backed by `Meta-Llama-3.1-8B` by `Meta` and `Streamlit` for frontend UI.
-
 # Legal-Assist-AI
 
 Legal-Assist-AI is an AI-powered assistant designed to help users navigate and analyze legal documents, leveraging advanced language models and vector search for efficient information retrieval.
+
+This repository contains the code for a chatbot using `Langchain` and backed by `Meta-Llama-3.1-8B` by `Meta` and `Streamlit` for frontend UI.
 
 
 ## Repository Structure
@@ -92,12 +91,16 @@ Legal-Assist-AI is an AI-powered assistant designed to help users navigate and a
     streamlit run app.py
     ```
 
+## FrontEnd (User Interface)
+
+<img width="1024" height="540" alt="image" src="https://github.com/user-attachments/assets/6cae34d3-192b-4f66-be82-5922b20cdeb2" />
 
 
-## Framework
+
+## Framework of Legal Assist AI
 ![alt text](archit.svg)
 
-## Results
+## Results on All India Bar Exam
 
 Performace scoring of 60.08% by the Legal-Assist-AI framework on `All-India Bar Exam` Benchmark, which is 22
 times more efficient than GPT-3.5 Turbo.
@@ -125,4 +128,5 @@ If you intend to use this work, please cite as:
       doi={10.48550/arXiv.2505.22003},
       url={https://arxiv.org/abs/2505.22003}, 
 }
+
 
