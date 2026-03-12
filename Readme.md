@@ -1,87 +1,115 @@
 # Legal Assist-AI
-This repository contains the code for a chatbot using `Langchain` and backed by `Meta-Llama-3-8B` by `Meta` using `Huggingface` and `Streamlit` for frontend UI.
-
-## Table of Contents
-1. [Installation](#installation)
-2. [Usage](#usage)
+This repository contains the code for a chatbot using `Langchain` and backed by `Meta-Llama-3.1-8B` by `Meta` and `Streamlit` for frontend UI.
 
 # Legal-Assist-AI
 
 Legal-Assist-AI is an AI-powered assistant designed to help users navigate and analyze legal documents, leveraging advanced language models and vector search for efficient information retrieval.
+
 
 ## Repository Structure
 
 - `app.py` — Main application entry point.
 - `embed.py` — Embedding logic for document processing.
 - `langchain_utils.py` — Utilities for integrating with LangChain.
-- `visualize.py` — Visualization tools for legal data.
+- `data_law/` — Collection of legal PDFs and resources.
+- `embed_db/` — Vector database files (FAISS, pickle).
 - `requirements.txt` — Python dependencies.
 - `Readme.md` — Project documentation.
 - `LICENSE` — License information.
-- `data_law/` — Collection of legal PDFs and resources.
-- `embed_db/` — Vector database files (FAISS, pickle).
 
-## Features
-
-- Search and analyze legal documents.
-- Visualize legal data and similarity scores.
-- Integrate with LangChain for advanced NLP tasks.
-- Modular codebase for easy extension.
 
 ## Getting Started
+#### 📦 Prerequisites
+
+- Python: **3.13.2** or any compatible version.
+- Git (for cloning the repository).
+- VS Code Installed
 
 1. Clone the repository:
     ```powershell
     git clone https://github.com/thejatingupta7/Legal-Assist-AI.git
     ```
-2. Install dependencies:
+
+    ## 🛠️ Setup Instructions
+
+    ### 1. Create and Activate Virtual Environment
+
+    **Windows:**
     ```powershell
+    python -m venv myenv
+    myenv\Scripts\activate
+    ```
+
+    **MacOS/Linux:**
+    ```bash
+    python3 -m venv myenv
+    source myenv/bin/activate
+    ```
+
+    ### 2. Install Dependencies
+
+    **GPU Users:**
+    ```bash
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
     pip install -r requirements.txt
     ```
-3. Run the application:
-    ```powershell
-    python app.py
+
+    **CPU Users:**
+    ```bash
+    pip install -r requirements.txt
     ```
+
+    ### 3. Install Tesseract for Document Scanning
+
+    **Note:** You need to install Tesseract OCR executable separately:
+    - **Windows:** Download from [https://github.com/UB-Mannheim/tesseract/wiki](https://github.com/UB-Mannheim/tesseract/wiki)
+    - **Mac:** `brew install tesseract`
+    - **Linux:** `sudo apt-get install tesseract-ocr`
+
+    Then configure the path in your code:
+    ```python
+    # Set the tesseract executable path (update this path based on your installation)
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Windows example
+    ```
+
+
+
+    ### 4. Install Ollama and Download Model
+
+    1. Download Ollama from [https://ollama.com](https://ollama.com)
+    2. Pull the model:
+        ```bash
+        ollama pull llama3.1:8b
+        ```
+
+    ### 5. Run the Application
+
+    ```bash
+    # Generate embeddings
+    python embed.py
+
+    # Launch the app
+    streamlit run app.py
+    ```
+
+
+
+## Framework
+![alt text](archit.svg)
+
+## Results
+
+Performace scoring of 60.08% by the Legal-Assist-AI framework on `All-India Bar Exam` Benchmark, which is 22
+times more efficient than GPT-3.5 Turbo.
+Tradeoff between Model Size and AIBE Performance scoring is visualized in the chart given below:
+
+
+![alt text](image.png)
 
 ## License
 
 This project is licensed under the terms of the LICENSE file.
 
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## Installation
-1. Clone the repository
-```
-git clone https://github.com/thejatingupta7/NyaysathiGPT
-```
-2. Create a virtual environment
-```
-python3 -m venv venv
-```
-3. Activate the virtual environment
-```
-source venv/bin/activate
-```
-4. Install the requirements
-```
-pip install -r requirements.txt
-```
-
-## Usage
-1. Embedding Knowledge into the Chatbot.
-    - Add your pdfs or docx files to the `data_law` folder.
-    - Run the following command to ingest the knowledge into the chatbot.
-    ```
-    python embed.py
-    ```
-    - This will create a `embed_db/` folder which will contain the embeddings of PDFs i.e. the vectorized information.
-2. Running the Chatbot.
-    - Run the following command to start the chatbot.
-    ```
-    python app.py
-    ```
 
 ## 📚 Citation
 If you intend to use this work, please cite as:

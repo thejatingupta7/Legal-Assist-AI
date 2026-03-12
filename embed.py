@@ -1,46 +1,39 @@
-# Import necessary modules from LangChain
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
+# vectorstore_builder.py
+# ------------------
+# Script to load PDF documents, split into chunks, embed them, and build a FAISS vectorstore
 
-# Path to PDF documents
-DATASET = "data_law/"
+import os
+import sys
+from langchain_utils import (
+    load_and_split_all_pdfs_in_folder,
+    load_embedding_model,
+    create_embeddings
+)
 
-# Path to save the FAISS index
-FAISS_INDEX = "embed_db/"                # folder containing embeddings (vectorised information)
+# === Configuration: set your paths here ===
+PDF_FOLDER = "data"             # Folder with your PDF files
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # HuggingFace embedding model name
+OUTPUT_FOLDER = "vectorstore"        # Directory to save the FAISS vectorstore
 
-# Function to embed all files in the dataset directory
-def embed_all():
+# === Preliminary checks ===
+if not os.path.isdir(PDF_FOLDER):
+    print(f"Error: PDF folder '{PDF_FOLDER}' does not exist or is not a directory.")
+    sys.exit(1)
 
-    # Initialize the document loader to load PDFs from the directory
-    loader = DirectoryLoader(DATASET, glob="*.pdf", loader_cls=PyPDFLoader)
-    print("Loader ready-----------------------------------------------------------------")
-    
-    # Load the PDF documents
-    documents = loader.load()
-    print("Loaded-----------------------------------------------------------------------")
+pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.lower().endswith('.pdf')]
+print(f"Found {len(pdf_files)} PDF(s) in '{PDF_FOLDER}': {pdf_files}")
+if not pdf_files:
+    print("No PDF files to process. Exiting.")
+    sys.exit(0)
 
-    # Initialize the text splitter to create chunks of the documents
-    splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200)
-    print("Splitter ready---------------------------------------------------------------")
+# === Execution: build the vectorstore ===
+print(f"✅ Loading and splitting PDFs from '{PDF_FOLDER}'...")
+chunks = load_and_split_all_pdfs_in_folder(PDF_FOLDER)
+print(f"  • Total chunks created: {len(chunks)}")
 
-    # Split the documents into chunks
-    chunks = splitter.split_documents(documents)
-    print("Splitted---------------------------------------------------------------------")
+print(f"✅ Loading embedding model '{EMBEDDING_MODEL}'...")
+embedding_model = load_embedding_model(EMBEDDING_MODEL)
 
-    # Initialize the embeddings generator
-    embeddings = HuggingFaceEmbeddings()
-    print("embedding ready--------------------------------------------------------------")
-    
-    # Create the vector store using FAISS with the document chunks and their embeddings
-    vector_store = FAISS.from_documents(chunks, embeddings)
-    print("embed done-------------------------------------------------------------------")
-
-    # Save the vector store locally
-    vector_store.save_local(FAISS_INDEX)
-    print("==================================Saved======================================")
-
-# Execute the embedding function if the script is run directly
-if __name__ == "__main__":
-    embed_all()
+print("Creating FAISS vectorstore and saving to disk...")
+create_embeddings(chunks, embedding_model, storing_path=OUTPUT_FOLDER)
+print(f"✅ Vectorstore saved at '{OUTPUT_FOLDER}'")

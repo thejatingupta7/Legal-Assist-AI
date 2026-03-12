@@ -1,61 +1,128 @@
-# Importing Libraries
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-from langchain_core.prompts import PromptTemplate 
-from langchain_community.llms import HuggingFacePipeline
+# Importing the necessary packages
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
+import textwrap
+import os
+
+# Function to load PDF data from a single file
+def load_pdf_data(file_path):
+    # Creating a PyMuPDFLoader object with file_path
+    loader = PyMuPDFLoader(file_path=file_path)
+    
+    # Loading the PDF file
+    docs = loader.load()
+    
+    # Returning the loaded document
+    return docs
+
+# Function to load and process all PDFs in a folder
+def load_and_split_all_pdfs_in_folder(folder_path):
+    all_docs = []
+    
+    # Iterating over all files in the folder
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".pdf"):
+            file_path = os.path.join(folder_path, filename)
+            docs = load_pdf_data(file_path)
+            split_docs_list = split_docs(docs)  # Splitting the loaded docs
+            all_docs.extend(split_docs_list)
+    
+    return all_docs
+
+# Responsible for splitting the documents into several chunks
+def split_docs(documents, chunk_size=1000, chunk_overlap=20):
+    
+    # Initializing the RecursiveCharacterTextSplitter with
+    # chunk_size and chunk_overlap
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap
+    )
+    
+    # Splitting the documents into chunks
+    chunks = text_splitter.split_documents(documents=documents)
+    
+    # returning the document chunks
+    return chunks
+
+# Function for creating embeddings using FAISS
+def create_embeddings(chunks, embedding_model, storing_path="vectorstore"):
+    # Creating the embeddings using FAISS
+    vectorstore = FAISS.from_documents(chunks, embedding_model)
+    
+    # Saving the model in current directory
+    vectorstore.save_local(storing_path)
+    
+    # returning the vectorstore
+    return vectorstore
 
 
-# Faiss Index Path
-FAISS_INDEX = "embed_db/"
+# Prettifying the response
+def get_response(query, chain):
+    # Getting response from chain
+    response = chain({'query': query})
+    
+    # Wrapping the text for better output in Jupyter Notebook
+    wrapped_text = textwrap.fill(response['result'], width=100)
+    return wrapped_text
 
+def load_embedding_model(model_path, normalize_embedding=True):
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    return HuggingFaceEmbeddings(
+        model_name=model_path,
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': normalize_embedding}
+    )
 
-# Custom prompt template
-custom_prompt_template = """[INST] <<SYS>>
-You are a trained bot to guide people about Indian Law. You will answer user's query with your knowledge and the context provided. 
-If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.
-Do not say thank you and tell you are an AI Assistant and be open about everything.
-<</SYS>>
-Use the following pieces of context to answer the users question.
-Context : {context}
-Question : {question}
-Answer : [/INST]
-"""
+def load_vector_store(storing_path="vectorstore", embedding_model=None):
+    from langchain_community.vectorstores import FAISS
+    return FAISS.load_local(
+        storing_path,
+        embedding_model,
+        allow_dangerous_deserialization=True
+    ).as_retriever(search_kwargs={"k": 4})
 
-# Set custom prompt template
-def set_custom_prompt_template():
-    prompt = PromptTemplate(template=custom_prompt_template, input_variables=["context", "question"])
-    return prompt
-
-
-# Load the LLM
-def load_llm():
-    repo_id = 'meta-llama/Meta-Llama-3-8B'
-    model = AutoModelForCausalLM.from_pretrained(repo_id, device_map='auto', load_in_4bit=True)
-    tokenizer = AutoTokenizer.from_pretrained(repo_id, use_fast=True, token="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")
-    pipe = pipeline('text-generation', model="meta-llama/Meta-Llama-3-8B", tokenizer=tokenizer, max_length=512)
-    llm = HuggingFacePipeline(pipeline=pipe)
-    return llm
-
-
-# Create Retrieval QA chain
-def retrieval_qa_chain(llm, prompt, db):
-    qa_chain = RetrievalQA.from_chain_type(
+def load_qa_chain(retriever, llm, prompt):
+    from langchain.chains import RetrievalQA  # still in core langchain
+    return RetrievalQA.from_chain_type(
         llm=llm,
-        chain_type='stuff',
-        retriever=db.as_retriever(search_kwargs={'k': 2}),
+        retriever=retriever,
+        chain_type="stuff",
         return_source_documents=True,
         chain_type_kwargs={'prompt': prompt}
     )
-    return qa_chain
 
+# Function to perform OCR on an uploaded image or PDF file
 
-# Create QA pipeline
-def qa_pipeline():
-    embeddings = HuggingFaceEmbeddings()
-    db = FAISS.load_local("embed_db/", embeddings, allow_dangerous_deserialization=True)
-    llm = load_llm()
-    qa_prompt = set_custom_prompt_template()
-    chain = retrieval_qa_chain(llm, qa_prompt, db)
-    return chain
+def perform_ocr(file) -> str:
+    import io
+    import pytesseract
+    from PIL import Image
+
+    filename = file.name.lower()
+    file_bytes = file.read()
+
+    # --- Image files ---
+    if filename.endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif', '.webp')):
+        image = Image.open(io.BytesIO(file_bytes))
+        text = pytesseract.image_to_string(image)
+        return text.strip()
+
+    # --- PDF files --- Always OCR every page for best accuracy ---
+    elif filename.endswith('.pdf'):
+        from pdf2image import convert_from_bytes
+        pages = convert_from_bytes(file_bytes)
+        extracted = []
+        for page_img in pages:
+            page_text = pytesseract.image_to_string(page_img)
+            extracted.append(page_text)
+        return "\n".join(extracted).strip()
+
+    else:
+        raise ValueError(
+            f"Unsupported file type: '{filename}'. "
+            "Supported formats: PNG, JPG, JPEG, TIFF, BMP, GIF, WEBP, PDF."
+        )
