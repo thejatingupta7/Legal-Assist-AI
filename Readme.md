@@ -93,8 +93,7 @@ This repository contains the code for a chatbot using `Langchain` and backed by 
 
 ## FrontEnd (User Interface)
 
-<img width="1024" height="540" alt="image" src="https://github.com/user-attachments/assets/6cae34d3-192b-4f66-be82-5922b20cdeb2" />
-
+![WhatsApp Image 2026-03-12 at 11 05 03 PM](https://github.com/user-attachments/assets/0d06f4b8-ff43-4c0a-8e16-1c35dfe93170)
 
 
 ## Framework of Legal Assist AI
@@ -128,6 +127,7 @@ If you intend to use this work, please cite as:
       doi={10.48550/arXiv.2505.22003},
       url={https://arxiv.org/abs/2505.22003}, 
 }
+
 
 
 
